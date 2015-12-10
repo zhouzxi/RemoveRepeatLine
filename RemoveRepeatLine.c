@@ -48,12 +48,12 @@ void RemoveSpaceInStr(UINT8 *pszStr, UINT32 iStrLen);
 ***********************************************************************/
 INT32 main()
 {	
-	UINT8  szTestFile[128] = {0};
+    UINT8  szTestFile[128] = {0};
 
     // 拼装配置文件路径
     snprintf(szTestFile, sizeof(szTestFile)-1, "%s/zhouzhaoxiong/zzx/RemoveRepeatLine/TestFile/TestFile.txt", getenv("HOME"));
 
-	RemRepLineAndWriResFile(szTestFile);   // 调用函数完成去重及写文件的操作
+    RemRepLineAndWriResFile(szTestFile);   // 调用函数完成去重及写文件的操作
 
     return 0;              
 }
@@ -72,39 +72,39 @@ INT32 main()
 void RemRepLineAndWriResFile(UINT8 *pszTestFile)
 {
     UINT8      szContentLine[256] = {0};
-	UINT32     iLineLen           = 0;
-	UINT32     iRetVal            = 0;
+    UINT32     iLineLen           = 0;
+    UINT32     iRetVal            = 0;
 	
     FILE       *fp                = NULL; 
-	T_FileInfo *ptContentListHead = NULL;
-	T_FileInfo *ptContentListTail = NULL;
-	T_FileInfo *ptCurrentContent  = NULL; 
+    T_FileInfo *ptContentListHead = NULL;
+    T_FileInfo *ptContentListTail = NULL;
+    T_FileInfo *ptCurrentContent  = NULL; 
     
-	if (pszTestFile == NULL)
-	{
-	    printf("RemRepLineAndWriResFile: pszTestFile is NULL!\n");
-		return;
-	}
+    if (pszTestFile == NULL)
+    {
+        printf("RemRepLineAndWriResFile: pszTestFile is NULL!\n");
+	return;
+    }
 	
-	printf("RemRepLineAndWriResFile: now, begin to process file %s\n", pszTestFile);
+    printf("RemRepLineAndWriResFile: now, begin to process file %s\n", pszTestFile);
 	
-	if ((fp = fopen(pszTestFile, "r")) == NULL) 
+    if ((fp = fopen(pszTestFile, "r")) == NULL) 
     {
         printf("RemRepLineAndWriResFile: open file %s failed!\n", pszTestFile);
         return;
     }
     else
     {
-	    ptContentListHead = NULL;
-		ptContentListTail = NULL; 
+        ptContentListHead = NULL;
+	ptContentListTail = NULL; 
 		
-		while (feof(fp) == 0 && ferror(fp) == 0)
+	while (feof(fp) == 0 && ferror(fp) == 0)
         {
             memset(szContentLine, 0x00, sizeof(szContentLine));
             if (fgets(szContentLine, sizeof(szContentLine), fp) == NULL)    // 从源文件中读取一行内容
             {
                 printf("RemRepLineAndWriResFile: get line null, break.\n");
-				break;
+		break;
             }
             else
             {
@@ -112,7 +112,7 @@ void RemRepLineAndWriResFile(UINT8 *pszTestFile)
             }
 
             RmNewLine(szContentLine);      // 去掉字符串后面的回车换行符
-			RemoveSpaceInStr(szContentLine, strlen(szContentLine));  // 去掉字符串中的空格
+            RemoveSpaceInStr(szContentLine, strlen(szContentLine));  // 去掉字符串中的空格
 
             iLineLen = strlen(szContentLine); 
             if (iLineLen == 0)        // 如果该行的有效长度为0, 则继续读取下一行
@@ -121,18 +121,18 @@ void RemRepLineAndWriResFile(UINT8 *pszTestFile)
                 continue;
             }
 			
-			if (ptContentListHead != NULL)    // 判断当前行是否已经存在了
-			{
-			    iRetVal = IsInList(ptContentListHead, szContentLine);
-				if (iRetVal == 1)   // 已经存在
-				{
-				    printf("RemRepLineAndWriResFile: this content line has already existed.\n");
+	    if (ptContentListHead != NULL)    // 判断当前行是否已经存在了
+	    {
+	        iRetVal = IsInList(ptContentListHead, szContentLine);
+	        if (iRetVal == 1)   // 已经存在
+		{
+		    printf("RemRepLineAndWriResFile: this content line has already existed.\n");
                     continue;
-				}
-			}
+		}
+	    }
 			
-			// 将当前行加入链表中
-			ptCurrentContent = (T_FileInfo *)malloc(sizeof(T_FileInfo));
+	    // 将当前行加入链表中
+	    ptCurrentContent = (T_FileInfo *)malloc(sizeof(T_FileInfo));
             if (ptCurrentContent == NULL)
             {
                 printf("RemRepLineAndWriResFile: exec malloc failed, memory may be not enough.\n");
@@ -150,21 +150,20 @@ void RemRepLineAndWriResFile(UINT8 *pszTestFile)
             {
                 if (ptContentListTail != NULL)  // 插入链表尾部
                 {
-                        
                     ptContentListTail->pNext = ptCurrentContent;
                     ptContentListTail        = ptCurrentContent;
                 }
             }
-	    }
-		// 源文件使用完毕
+	}
+	// 源文件使用完毕
         fclose(fp);
         fp = NULL;
-	}
+    }
 			
     // 将去重之后的结果写入文件中
-	WriteToFile(ptContentListHead);
+    WriteToFile(ptContentListHead);
 	
-	// 清空链表
+    // 清空链表
     ClearList(ptContentListHead);   
     ptContentListHead = NULL;
 }
@@ -184,23 +183,23 @@ void RmNewLine(UINT8 *pInStr)
 {
     UINT32  iStrLen = 0;
 	
-	if (pInStr == NULL)
-	{
-	    printf("RmNewLine: pInStr is NULL!\n");
-		return;
-	}
+    if (pInStr == NULL)
+    {
+        printf("RmNewLine: pInStr is NULL!\n");
+	return;
+    }
 
     iStrLen = strlen(pInStr);
     while (iStrLen > 0)
     {
         if (pInStr[iStrLen-1] == '\n' || pInStr[iStrLen-1] == '\r')
-		{
+	{
             pInStr[iStrLen-1] = '\0';
-	    }
+	}
         else
-		{
+	{
             break;
-	    }
+	}
 
         iStrLen --;
     }
@@ -221,11 +220,11 @@ UINT32 IsInList(T_FileInfo *ptContentListHead, UINT8 *pszContentLine)
 {
     T_FileInfo  *pTmpInfo = ptContentListHead;
 	
-	if (ptContentListHead == NULL || pszContentLine == NULL)
-	{
-	    printf("IsInList: input parameter(s) is NULL!\n");
-		return 0;
-	}
+    if (ptContentListHead == NULL || pszContentLine == NULL)
+    {
+        printf("IsInList: input parameter(s) is NULL!\n");
+	return 0;
+    }
 	
     while (pTmpInfo != NULL)
     {
@@ -259,11 +258,11 @@ void WriteToFile(T_FileInfo *ptContentListHead)
     UINT8   szLocalFile[500]    = {0};
     UINT8   szContentBuf[256]   = {0};
 	
-	if (ptContentListHead == NULL)
-	{
-	    printf("WriteToFile: input parameter is NULL!\n");
-		return;
-	}
+    if (ptContentListHead == NULL)
+    {
+        printf("WriteToFile: input parameter is NULL!\n");
+	return;
+    }
     
     snprintf(szLocalFile, sizeof(szLocalFile)-1, "%s/zhouzhaoxiong/zzx/RemoveRepeatLine/TestFile/ResultFile.txt", getenv("HOME"));
     fp = fopen(szLocalFile, "a+");
@@ -273,23 +272,23 @@ void WriteToFile(T_FileInfo *ptContentListHead)
          return;
     }
     
-	while (ptContentListHead != NULL)  
-	{
-	    memset(szContentBuf, 0x00, sizeof(szContentBuf));
+    while (ptContentListHead != NULL)  
+    {
+        memset(szContentBuf, 0x00, sizeof(szContentBuf));
         strncpy(szContentBuf, ptContentListHead->szContentLine, strlen(ptContentListHead->szContentLine));
         printf("WriteToFile: LocalFile=%s, ContentBuf=%s\n", szLocalFile, szContentBuf);
 
         fputs(szContentBuf, fp);
-		fputs("\r\n", fp);     // 加上回车换行符
+	fputs("\r\n", fp);     // 加上回车换行符
         fflush(fp);
 		
-		ptContentListHead = ptContentListHead->pNext;   
+	ptContentListHead = ptContentListHead->pNext;   
     }
 
     fclose(fp);
     fp = NULL;
 	
-	return;
+    return;
 }
 
 
@@ -306,13 +305,13 @@ void WriteToFile(T_FileInfo *ptContentListHead)
 void ClearList(T_FileInfo *ptContentListHead)
 {
     T_FileInfo *ptContentList = NULL;
-	T_FileInfo *pTmpData      = NULL;
+    T_FileInfo *pTmpData      = NULL;
 	
-	if (ptContentListHead == NULL)
-	{
-	    printf("ClearList: input parameter is NULL!\n");
-		return;
-	}
+    if (ptContentListHead == NULL)
+    {
+        printf("ClearList: input parameter is NULL!\n");
+	return;
+    }
 
     ptContentList = ptContentListHead;
     while (ptContentList != NULL)
